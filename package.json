@@ -1,0 +1,45 @@
+{
+  "name": "cpt",
+  "displayName": "coder's passion tracker",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.82.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "cpt.helloWorld",
+        "title": "tracker"
+      },
+      {
+        "command": "cpt.clock",
+        "title": "clock"
+      }
+    ]
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "pnpm run lint",
+    "test": "node ./test/runTest.js",
+    "format": "prettier -w ."
+  },
+  "devDependencies": {
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "20.2.5",
+    "@types/vscode": "^1.82.0",
+    "@vscode/test-electron": "^2.3.2",
+    "eslint": "^8.41.0",
+    "eslint-config-prettier": "^9.0.0",
+    "glob": "^8.1.0",
+    "mocha": "^10.2.0",
+    "prettier": "^3.0.3",
+    "typescript": "^5.1.3"
+  }
+}
