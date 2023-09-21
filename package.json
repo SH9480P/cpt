@@ -14,12 +14,12 @@
   "contributes": {
     "commands": [
       {
-        "command": "cpt.helloWorld",
-        "title": "tracker"
+        "command": "cpt.veTest",
+        "title": "ve test"
       },
       {
-        "command": "cpt.clock",
-        "title": "clock"
+        "command": "cpt.resetState",
+        "title": "reset state"
       }
     ]
   },
