@@ -2,7 +2,7 @@ const vscode = require('vscode')
 const path = require('path')
 const fsPromises = require('fs/promises')
 
-function getKeyFromCurrentTimeStamp() {
+function getStateKeyFromCurrentTimeStamp() {
     const now = new Date()
     const minutes = now.getMinutes()
     if (minutes < 30) {
@@ -16,7 +16,8 @@ function getKeyFromCurrentTimeStamp() {
 
 // cpt 디렉토리가 있는지 확인하고 없으면 생성, 주소 반환.
 // TODO: 확장 프로그램 설치 시 or 시작 시 cpt 디렉토리 생성하기
-function getStoragePath(context) {
+// TODO: createDirectory Sync로 변경하기
+function getStorageDirPath(context) {
     const storageUri = context.storageUri
     const storageDirName = path.join(path.dirname(storageUri.path), 'cpt')
 
@@ -30,38 +31,38 @@ function getStoragePath(context) {
         .then(() => storageDirName)
 }
 
-function getJSONFileNameFromKey(key) {
-    const keyDate = new Date(key)
+function getJSONFileNameFromStateKey(stateKey) {
+    const keyDate = new Date(stateKey)
     return `${keyDate.getUTCFullYear()}-${keyDate.getUTCMonth() + 1}.json`
 }
 
-function getDateHourMinuteFromKey(key) {
-    const keyDate = new Date(key)
+function getDateHourMinuteFromStateKey(stateKey) {
+    const keyDate = new Date(stateKey)
     return `${keyDate.getUTCDate()}-${keyDate.getUTCHours()}-${keyDate.getUTCMinutes()}`
 }
 
 // 파일 읽고 데이터 추가하여 다시 쓰기
-function updateStorageFile(context, key, changeObject) {
-    const fileName = getJSONFileNameFromKey(key)
-    getStoragePath(context).then((storagePath) => {
-        const storageFileUri = vscode.Uri.parse(
-            path.join(storagePath, fileName)
-        )
-        vscode.workspace.fs.readFile(storageFileUri).then((fileData) => {
-            let fileObject = []
-            if (fileData.length !== 0) {
-                fileObject = JSON.parse(fileData.toString())
-            }
-            fileObject.push({
-                ...changeObject,
-                date: getDateHourMinuteFromKey(key),
-            })
-            return vscode.workspace.fs.writeFile(
-                storageFileUri,
-                Buffer.from(JSON.stringify(changeObject))
-            )
-        })
+async function updateStorageFile(context, stateKey, changeObject) {
+    const fileName = getJSONFileNameFromStateKey(stateKey)
+    const storageDirPath = await getStorageDirPath(context)
+    const storageFileUri = vscode.Uri.parse(
+        path.join(storageDirPath, fileName)
+    )
+
+    const fileData = await vscode.workspace.fs.readFile(storageFileUri)
+    let fileObject = []
+    if (fileData.length !== 0) {
+        fileObject = JSON.parse(fileData.toString())
+    }
+    fileObject.push({
+        ...changeObject,
+        date: getDateHourMinuteFromStateKey(stateKey),
     })
+
+    vscode.workspace.fs.writeFile(
+        storageFileUri,
+        Buffer.from(JSON.stringify(changeObject))
+    )
 }
 
 /**
@@ -82,7 +83,7 @@ function activate(context) {
                 }
 
                 if (addNum !== 0 || deleteNum !== 0) {
-                    const key = getKeyFromCurrentTimeStamp()
+                    const key = getStateKeyFromCurrentTimeStamp()
                     let changeObject = context.workspaceState.get(key)
                     if (changeObject === undefined) {
                         changeObject = { addTotal: 0, deleteTotal: 0 }
