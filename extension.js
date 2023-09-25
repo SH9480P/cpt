@@ -20,14 +20,19 @@ function getStoragePath(context) {
     const storageUri = context.storageUri
     const storageDirName = path.join(path.dirname(storageUri.path), 'cpt')
 
-    return fsPromises.access(storageDirName)
-        .catch(() => vscode.workspace.fs.createDirectory(vscode.Uri.parse(storageDirName)))
+    return fsPromises
+        .access(storageDirName)
+        .catch(() =>
+            vscode.workspace.fs.createDirectory(
+                vscode.Uri.parse(storageDirName)
+            )
+        )
         .then(() => storageDirName)
 }
 
 function getJSONFileNameFromKey(key) {
     const keyDate = new Date(key)
-    return `${keyDate.getUTCFullYear()}-${keyDate.getUTCMonth()+1}.json`
+    return `${keyDate.getUTCFullYear()}-${keyDate.getUTCMonth() + 1}.json`
 }
 
 function getDateHourMinuteFromKey(key) {
@@ -38,11 +43,11 @@ function getDateHourMinuteFromKey(key) {
 // 파일 읽고 데이터 추가하여 다시 쓰기
 function updateStorageFile(context, key, changeObject) {
     const fileName = getJSONFileNameFromKey(key)
-    getStoragePath(context)
-    .then((storagePath) => {
-        const storageFileUri = vscode.Uri.parse(path.join(storagePath, fileName))
-        vscode.workspace.fs.readFile(storageFileUri)
-        .then((fileData) => {
+    getStoragePath(context).then((storagePath) => {
+        const storageFileUri = vscode.Uri.parse(
+            path.join(storagePath, fileName)
+        )
+        vscode.workspace.fs.readFile(storageFileUri).then((fileData) => {
             let fileObject = []
             if (fileData.length !== 0) {
                 fileObject = JSON.parse(fileData.toString())
@@ -51,7 +56,10 @@ function updateStorageFile(context, key, changeObject) {
                 ...changeObject,
                 date: getDateHourMinuteFromKey(key),
             })
-            return vscode.workspace.fs.writeFile(storageFileUri, Buffer.from(JSON.stringify(changeObject)))
+            return vscode.workspace.fs.writeFile(
+                storageFileUri,
+                Buffer.from(JSON.stringify(changeObject))
+            )
         })
     })
 }
@@ -81,7 +89,8 @@ function activate(context) {
 
                         // workspaceState에 저장된 값을 json 파일에 저장
                         context.workspaceState.keys().forEach((key) => {
-                            const priorChangeObject = context.workspaceState.get(key)
+                            const priorChangeObject =
+                                context.workspaceState.get(key)
                             context.workspaceState.update(key, undefined)
 
                             updateStorageFile(context, key, priorChangeObject)
