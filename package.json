@@ -20,6 +20,10 @@
       {
         "command": "cpt.resetState",
         "title": "reset state"
+      },
+      {
+        "command": "cpt.cpttest",
+        "title": "cpttest"
       }
     ]
   },

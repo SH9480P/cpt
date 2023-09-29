@@ -117,6 +117,12 @@ function activate(context) {
 
     context.subscriptions.push(veTest)
     context.subscriptions.push(resetState)
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('cpt.cpttest', () => {
+            vscode.window.showInformationMessage('Just For test')
+        })
+    )
 }
 
 function deactivate() {}
