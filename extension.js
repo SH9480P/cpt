@@ -1,5 +1,5 @@
 const vscode = require('vscode')
-const { updateCodeChange } = require('./lib/workspaceStateHandler')
+const { updateCodeChange, updateCodingDuration } = require('./lib/workspaceStateHandler')
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -20,6 +20,10 @@ function activate(context) {
 
                 updateCodeChange(context, addNum, deleteNum)
             }
+        })
+
+        vscode.window.onDidChangeTextEditorSelection((event) => {
+            updateCodingDuration(context)
         })
     })
 
