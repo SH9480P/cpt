@@ -1,5 +1,5 @@
 const vscode = require('vscode')
-const { updateCodeChange, updateCodingDuration } = require('./lib/workspaceStateHandler')
+const { updateCodeChange, updateCodingDuration, saveTracking } = require('./lib/workspaceStateHandler')
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -25,6 +25,10 @@ function activate(context) {
         vscode.window.onDidChangeTextEditorSelection((event) => {
             updateCodingDuration(context)
         })
+
+        setInterval(() => {
+            saveTracking(context)
+        }, 1000 * 60)
     })
 
     let resetState = vscode.commands.registerCommand('cpt.resetState', () => {
@@ -40,6 +44,10 @@ function activate(context) {
     context.subscriptions.push(
         vscode.commands.registerCommand('cpt.cpttest', () => {
             vscode.window.showInformationMessage('Just For test')
+            context.workspaceState.update('test', {t: 1, e: 2})
+            let a = context.workspaceState.get('test')
+            a.e = 1000
+            console.log(context.workspaceState.get('test'))
         })
     )
 }
