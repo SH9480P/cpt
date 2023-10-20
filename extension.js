@@ -6,6 +6,7 @@ const { updateCodeChange, updateCodingDuration, saveTracking } = require('./lib/
  */
 function activate(context) {
     console.log('Congratulations, your extension "cpt" is now active!')
+    //TODO: complete, codeChange, codingTime workspaceState 초기화 필요
 
     let veTest = vscode.commands.registerCommand('cpt.veTest', () => {
         vscode.workspace.onDidChangeTextDocument((event) => {
@@ -28,7 +29,7 @@ function activate(context) {
 
         setInterval(() => {
             saveTracking(context)
-        }, 1000 * 60)
+        }, 1000 * 60 * 3)
     })
 
     let resetState = vscode.commands.registerCommand('cpt.resetState', () => {
