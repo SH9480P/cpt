@@ -27,9 +27,12 @@ function activate(context) {
             updateCodingDuration(context)
         })
 
-        setInterval(() => {
-            saveTracking(context)
-        }, 1000 * 60 * 3)
+        setInterval(
+            () => {
+                saveTracking(context)
+            },
+            1000 * 60 * 3
+        )
     })
 
     let resetState = vscode.commands.registerCommand('cpt.resetState', () => {
@@ -45,7 +48,7 @@ function activate(context) {
     context.subscriptions.push(
         vscode.commands.registerCommand('cpt.cpttest', () => {
             vscode.window.showInformationMessage('Just For test')
-            context.workspaceState.update('test', {t: 1, e: 2})
+            context.workspaceState.update('test', { t: 1, e: 2 })
             let a = context.workspaceState.get('test')
             a.e = 1000
             console.log(context.workspaceState.get('test'))
