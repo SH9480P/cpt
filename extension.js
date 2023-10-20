@@ -6,9 +6,12 @@ const { updateCodeChange, updateCodingDuration, saveTracking } = require('./lib/
  */
 function activate(context) {
     console.log('Congratulations, your extension "cpt" is now active!')
-    //TODO: complete, codeChange, codingTime workspaceState 초기화 필요
 
     let veTest = vscode.commands.registerCommand('cpt.veTest', () => {
+        if (context.workspaceState.get('complete') === undefined) {
+            context.workspaceState.update('complete', {})
+        }
+
         vscode.workspace.onDidChangeTextDocument((event) => {
             if (!event.document.isUntitled) {
                 let addNum = 0
@@ -31,7 +34,7 @@ function activate(context) {
             () => {
                 saveTracking(context)
             },
-            1000 * 60 * 3
+            1000 * 60 * 2
         )
     })
 
@@ -44,16 +47,6 @@ function activate(context) {
 
     context.subscriptions.push(veTest)
     context.subscriptions.push(resetState)
-
-    context.subscriptions.push(
-        vscode.commands.registerCommand('cpt.cpttest', () => {
-            vscode.window.showInformationMessage('Just For test')
-            context.workspaceState.update('test', { t: 1, e: 2 })
-            let a = context.workspaceState.get('test')
-            a.e = 1000
-            console.log(context.workspaceState.get('test'))
-        })
-    )
 }
 
 function deactivate() {}
