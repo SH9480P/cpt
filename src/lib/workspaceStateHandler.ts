@@ -1,7 +1,10 @@
-const vscode = require('vscode')
-const dayjs = require('dayjs')
-const utc = require('dayjs/plugin/utc')
-const minMax = require('dayjs/plugin/minMax')
+import { ExtensionContext } from 'vscode'
+import * as dayjs from 'dayjs'
+import * as utc from 'dayjs/plugin/utc'
+import * as minMax from 'dayjs/plugin/minMax'
+import { CodeChange } from '../interface/codeChange.interface'
+import { Complete } from '../interface/complete.interface'
+import { CodingDuration } from '../interface/codingDuration.interface'
 
 dayjs.extend(utc)
 dayjs.extend(minMax)
@@ -10,7 +13,7 @@ const CODE_CHANGE_KEY = 'codeChange'
 const CODING_DURATION_KEY = 'codingDuration'
 const COMPLETE_KEY = 'complete'
 
-function extractYMDHmFromDayjsObject(dayjsObject) {
+function extractYMDHmFromDayjsObject(dayjsObject: dayjs.Dayjs) {
     const minutes = dayjsObject.minute()
     if (minutes < 30) {
         dayjsObject = dayjsObject.set('minute', 0)
@@ -21,28 +24,23 @@ function extractYMDHmFromDayjsObject(dayjsObject) {
     return dayjsObject.toISOString().substring(0, 16) + 'Z'
 }
 
-function getNextYMDHm(YMDHm) {
+function getNextYMDHm(YMDHm: string) {
     const nextDate = dayjs.utc(YMDHm).add(30, 'm')
     return extractYMDHmFromDayjsObject(nextDate)
 }
 
-function extractYearMonthString(YMDHm) {
+function extractYearMonthString(YMDHm: string) {
     const keyDate = dayjs.utc(YMDHm)
     return `${keyDate.year()}-${keyDate.month()}`
 }
 
-/**
- * @param {vscode.ExtensionContext} context
- * @param {number} addNum
- * @param {number} deleteNum
- */
-function updateCodeChange(context, addNum, deleteNum) {
+export function updateCodeChange(context: ExtensionContext, addNum: number, deleteNum: number) {
     if (addNum !== 0 || deleteNum !== 0) {
         const now = dayjs.utc()
         const currentYMDHm = extractYMDHmFromDayjsObject(now)
         const currentKey = CODE_CHANGE_KEY
 
-        let changeObject = context.workspaceState.get(currentKey)
+        let changeObject = context.workspaceState.get<CodeChange>(currentKey)
         if (changeObject === undefined) {
             changeObject = { addTotal: addNum, deleteTotal: deleteNum, YMDHm: currentYMDHm }
             context.workspaceState.update(currentKey, changeObject)
@@ -62,11 +60,17 @@ function updateCodeChange(context, addNum, deleteNum) {
             changeObject.addTotal += addNum
             changeObject.deleteTotal += deleteNum
         }
+        context.workspaceState.update(currentKey, changeObject)
     }
 }
 
-function updateCompleteCodeChange(context, addNum, deleteNum, YMDHm) {
-    const completeState = context.workspaceState.get(COMPLETE_KEY)
+function updateCompleteCodeChange(
+    context: ExtensionContext,
+    addNum: number,
+    deleteNum: number,
+    YMDHm: string
+) {
+    const completeState = context.workspaceState.get<Complete>(COMPLETE_KEY)!
     const yearMonth = extractYearMonthString(YMDHm)
     if (completeState[yearMonth] === undefined) {
         completeState[yearMonth] = []
@@ -75,21 +79,20 @@ function updateCompleteCodeChange(context, addNum, deleteNum, YMDHm) {
         if (completeState[yearMonth][i].YMDHm === YMDHm) {
             completeState[yearMonth][i].addTotal = addNum
             completeState[yearMonth][i].deleteTotal = deleteNum
+            context.workspaceState.update(COMPLETE_KEY, completeState)
             return
         }
     }
     completeState[yearMonth].push({ YMDHm, addTotal: addNum, deleteTotal: deleteNum, longTotal: 0 })
+    context.workspaceState.update(COMPLETE_KEY, completeState)
 }
 
-/**
- * @param {vscode.ExtensionContext} context
- */
-function updateCodingDuration(context) {
+export function updateCodingDuration(context: ExtensionContext) {
     const now = dayjs.utc()
     const currentYMDHm = extractYMDHmFromDayjsObject(now)
     const currentKey = CODING_DURATION_KEY
 
-    let durationObject = context.workspaceState.get(currentKey)
+    let durationObject = context.workspaceState.get<CodingDuration>(currentKey)
     if (durationObject === undefined) {
         durationObject = {
             lastTriggeredTime: now,
@@ -112,7 +115,7 @@ function updateCodingDuration(context) {
             )
             updateCompleteCodingDuration(
                 context,
-                dayjs.min(durationObject.lastTriggeredTime.add(30, 's'), now).diff(nextYMDHm),
+                dayjs.min(durationObject.lastTriggeredTime.add(30, 's'), now)!.diff(nextYMDHm),
                 nextYMDHm
             )
         }
@@ -124,7 +127,7 @@ function updateCodingDuration(context) {
             durationObject.lastTriggeredTime.add(30, 's').isAfter(dayjs(currentYMDHm))
         ) {
             durationObject.longTotal = dayjs
-                .min(now, durationObject.lastTriggeredTime.add(30, 's'))
+                .min(now, durationObject.lastTriggeredTime.add(30, 's'))!
                 .diff(dayjs(currentYMDHm))
         }
         durationObject.lastTriggeredTime = now
@@ -137,10 +140,11 @@ function updateCodingDuration(context) {
         }
         durationObject.lastTriggeredTime = now
     }
+    context.workspaceState.update(currentKey, durationObject)
 }
 
-function updateCompleteCodingDuration(context, longTotal, YMDHm) {
-    const completeState = context.workspaceState.get(COMPLETE_KEY)
+function updateCompleteCodingDuration(context: ExtensionContext, longTotal: number, YMDHm: string) {
+    const completeState = context.workspaceState.get<Complete>(COMPLETE_KEY)!
     const yearMonth = extractYearMonthString(YMDHm)
 
     if (completeState[yearMonth] === undefined) {
@@ -149,17 +153,19 @@ function updateCompleteCodingDuration(context, longTotal, YMDHm) {
     for (let i = completeState[yearMonth].length - 1; i >= 0; i--) {
         if (completeState[yearMonth][i].YMDHm === YMDHm) {
             completeState[yearMonth][i].longTotal = longTotal
+            context.workspaceState.update(COMPLETE_KEY, completeState)
             return
         }
     }
     completeState[yearMonth].push({ YMDHm, addTotal: 0, deleteTotal: 0, longTotal: longTotal })
+    context.workspaceState.update(COMPLETE_KEY, completeState)
 }
 
-function saveTracking(context) {
+export function saveTracking(context: ExtensionContext) {
     const now = dayjs.utc()
     const currentYMDHm = extractYMDHmFromDayjsObject(now)
 
-    const codeChangeObject = context.workspaceState.get(CODE_CHANGE_KEY)
+    const codeChangeObject = context.workspaceState.get<CodeChange>(CODE_CHANGE_KEY)
     if (codeChangeObject !== undefined) {
         const { addTotal, deleteTotal, YMDHm: ccYMDHm } = codeChangeObject
         updateCompleteCodeChange(context, addTotal, deleteTotal, ccYMDHm)
@@ -167,7 +173,7 @@ function saveTracking(context) {
             context.workspaceState.update(CODE_CHANGE_KEY, undefined)
         }
     }
-    const codingDurationObject = context.workspaceState.get(CODING_DURATION_KEY)
+    const codingDurationObject = context.workspaceState.get<CodingDuration>(CODING_DURATION_KEY)
     if (codingDurationObject !== undefined) {
         const { longTotal, YMDHm: cdYMDHm } = codingDurationObject
         updateCompleteCodingDuration(context, longTotal, cdYMDHm)
@@ -175,10 +181,4 @@ function saveTracking(context) {
             context.workspaceState.update(CODING_DURATION_KEY, undefined)
         }
     }
-}
-
-module.exports = {
-    updateCodeChange,
-    updateCodingDuration,
-    saveTracking,
 }

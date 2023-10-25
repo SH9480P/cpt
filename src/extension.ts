@@ -1,33 +1,37 @@
-const vscode = require('vscode')
-const { updateCodeChange, updateCodingDuration, saveTracking } = require('./lib/workspaceStateHandler')
+import { commands, ExtensionContext, window, workspace } from 'vscode'
+import { updateCodeChange, updateCodingDuration, saveTracking } from './lib/workspaceStateHandler'
 
-/**
- * @param {vscode.ExtensionContext} context
- */
-function activate(context) {
+export function activate(context: ExtensionContext) {
     console.log('Congratulations, your extension "cpt" is now active!')
 
-    let veTest = vscode.commands.registerCommand('cpt.veTest', () => {
+    if (context.workspaceState.get('complete') === undefined) {
+        context.workspaceState.update('complete', {})
+    }
+
+    let veTest = commands.registerCommand('cpt.veTest', () => {
         if (context.workspaceState.get('complete') === undefined) {
             context.workspaceState.update('complete', {})
         }
 
-        vscode.workspace.onDidChangeTextDocument((event) => {
-            if (!event.document.isUntitled) {
+        workspace.onDidChangeTextDocument((event) => {
+            if (!event.document.isUntitled && event.document.languageId !== 'log') {
                 let addNum = 0
                 let deleteNum = 0
 
                 for (let i of event.contentChanges) {
                     addNum += i.text.length
                     deleteNum += i.rangeLength
+                    // console.log(i.text, i.text.length)
                 }
 
                 updateCodeChange(context, addNum, deleteNum)
+                // console.log(context.workspaceState.get('codeChange'))
             }
         })
 
-        vscode.window.onDidChangeTextEditorSelection((event) => {
+        window.onDidChangeTextEditorSelection((event) => {
             updateCodingDuration(context)
+            // console.log(context.workspaceState.get('codingDuration'))
         })
 
         setInterval(
@@ -38,7 +42,7 @@ function activate(context) {
         )
     })
 
-    let resetState = vscode.commands.registerCommand('cpt.resetState', () => {
+    let resetState = commands.registerCommand('cpt.resetState', () => {
         context.workspaceState.keys().forEach((key) => {
             context.workspaceState.update(key, undefined)
         })
@@ -49,9 +53,4 @@ function activate(context) {
     context.subscriptions.push(resetState)
 }
 
-function deactivate() {}
-
-module.exports = {
-    activate,
-    deactivate,
-}
+export function deactivate() {}

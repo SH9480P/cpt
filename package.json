@@ -4,13 +4,13 @@
   "description": "",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.82.0"
+    "vscode": "^1.83.0"
   },
   "categories": [
     "Other"
   ],
   "activationEvents": [],
-  "main": "./extension.js",
+  "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
@@ -24,9 +24,15 @@
     ]
   },
   "scripts": {
-    "lint": "eslint .",
-    "pretest": "pnpm run lint",
-    "test": "node ./test/runTest.js",
+    "install:all": "npm install && cd webview-ui && npm install",
+    "start:webview": "cd webview-ui && npm run start",
+    "build:webview": "cd webview-ui && npm run build",
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
     "format": "prettier -w ."
   },
   "devDependencies": {
@@ -34,6 +40,8 @@
     "@types/mocha": "^10.0.1",
     "@types/node": "20.2.5",
     "@types/vscode": "^1.82.0",
+    "@typescript-eslint/eslint-plugin": "^6.9.0",
+    "@typescript-eslint/parser": "^6.9.0",
     "@vscode/test-electron": "^2.3.2",
     "eslint": "^8.41.0",
     "eslint-config-prettier": "^9.0.0",
