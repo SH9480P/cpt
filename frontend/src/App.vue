@@ -12,18 +12,15 @@ import { defineComponent } from 'vue'
 
 provideVSCodeDesignSystem().register(vsCodeButton())
 
-function handleHowdyClick() {
-    vscode.postMessage({
-        command: 'hello',
-        text: 'Hey there partner! 🤠',
-    })
-}
 export default defineComponent({
     name: 'App',
-    setup() {
-        return {
-            handleHowdyClick,
-        }
+    methods: {
+        handleHowdyClick() {
+            vscode.postMessage({
+                command: 'hello',
+                text: 'Hey there partner! 🤠',
+            })
+        },
     },
 })
 </script>
