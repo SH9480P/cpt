@@ -24,13 +24,13 @@
     ]
   },
   "scripts": {
-    "install:all": "npm install && cd webview-ui && npm install",
-    "start:webview": "cd webview-ui && npm run start",
-    "build:webview": "cd webview-ui && npm run build",
-    "vscode:prepublish": "npm run compile",
+    "install:all": "pnpm install && cd webview-ui && pnpm install",
+    "start:webview": "cd webview-ui && pnpm run start",
+    "build:webview": "cd webview-ui && pnpm run build",
+    "vscode:prepublish": "pnpm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "pretest": "npm run compile && npm run lint",
+    "pretest": "pnpm run compile && pnpm run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",
     "format": "prettier -w ."
