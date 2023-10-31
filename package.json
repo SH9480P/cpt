@@ -31,6 +31,7 @@
     "install:all": "pnpm install && cd frontend && pnpm install",
     "start:webview": "cd frontend && pnpm run start",
     "build:webview": "cd frontend && pnpm run build",
+    "build-only:webview": "cd frontend && pnpm run build-only",
     "vscode:prepublish": "pnpm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
@@ -55,6 +56,7 @@
     "typescript": "^5.1.3"
   },
   "dependencies": {
+    "bootstrap-icons": "^1.11.1",
     "dayjs": "^1.11.10"
   }
 }

@@ -5,6 +5,7 @@ import * as minMax from 'dayjs/plugin/minMax'
 import { CodeChange } from '../interface/codeChange.interface'
 import { Complete } from '../interface/complete.interface'
 import { CodingDuration } from '../interface/codingDuration.interface'
+import { HelloWorldPanel } from '../panels/HelloWorldPanel'
 
 dayjs.extend(utc)
 dayjs.extend(minMax)
@@ -158,7 +159,11 @@ function updateCompleteCodingDuration(context: ExtensionContext, longTotal: numb
         }
     }
     completeState[yearMonth].push({ YMDHm, addTotal: 0, deleteTotal: 0, longTotal: longTotal })
-    context.workspaceState.update(COMPLETE_KEY, completeState)
+    context.workspaceState.update(COMPLETE_KEY, completeState).then(() => {
+        if (HelloWorldPanel.currentPanel) {
+            HelloWorldPanel.currentPanel.sendMessageToVSCode('getWorkspaceState', context)
+        }
+    })
 }
 
 export function saveTracking(context: ExtensionContext) {
@@ -173,7 +178,7 @@ export function saveTracking(context: ExtensionContext) {
             context.workspaceState.update(CODE_CHANGE_KEY, undefined)
         }
     }
-    const codingDurationObject = context.workspaceState.get<CodingDuration>(CODING_DURATION_KEY)
+    const codingDurationObject = context.workspaceState.get<CodingDuration>(CODING_DURATION_KEY) //TODO: 30분 지나기 직전의 codingDuration에 대해 30초 분할 계산 필요함
     if (codingDurationObject !== undefined) {
         const { longTotal, YMDHm: cdYMDHm } = codingDurationObject
         updateCompleteCodingDuration(context, longTotal, cdYMDHm)

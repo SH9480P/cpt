@@ -1,6 +1,7 @@
 import { commands, ExtensionContext, window, workspace } from 'vscode'
 import { updateCodeChange, updateCodingDuration, saveTracking } from './lib/workspaceStateHandler'
 import { HelloWorldPanel } from './panels/HelloWorldPanel'
+import { Complete } from './interface/complete.interface'
 
 export function activate(context: ExtensionContext) {
     console.log('Congratulations, your extension "cpt" is now active!')
@@ -38,6 +39,7 @@ export function activate(context: ExtensionContext) {
         setInterval(
             () => {
                 saveTracking(context)
+                console.log(context.workspaceState.get('complete'))
             },
             1000 * 60 * 2
         )
@@ -53,7 +55,7 @@ export function activate(context: ExtensionContext) {
     context.subscriptions.push(veTest)
     context.subscriptions.push(resetState)
     const showHelloWorldCommand = commands.registerCommand('cpt.showHelloWorld', () => {
-        HelloWorldPanel.render(context.extensionUri)
+        HelloWorldPanel.render(context.extensionUri, context)
         console.log('panel open!')
     })
 

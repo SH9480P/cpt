@@ -1,0 +1,122 @@
+{
+    "2023-8": [
+        {
+            "YMDHm": "2023-09-29T08:30Z",
+            "longTotal": 60000,
+            "addTotal": 100,
+            "deleteTotal": 10
+        },
+        {
+            "YMDHm": "2023-09-29T09:00Z",
+            "longTotal": 120000,
+            "addTotal": 200,
+            "deleteTotal": 20
+        },
+        {
+            "YMDHm": "2023-09-29T09:30Z",
+            "longTotal": 180000,
+            "addTotal": 150,
+            "deleteTotal": 15
+        },
+        {
+            "YMDHm": "2023-09-29T10:00Z",
+            "longTotal": 1800000,
+            "addTotal": 400,
+            "deleteTotal": 40
+        },
+        {
+            "YMDHm": "2023-09-29T11:30Z",
+            "longTotal": 987654,
+            "addTotal": 5000,
+            "deleteTotal": 500
+        }
+    ],
+    "2023-9": [
+        {
+            "YMDHm": "2023-10-10T08:30Z",
+            "longTotal": 60000,
+            "addTotal": 100,
+            "deleteTotal": 10
+        },
+        {
+            "YMDHm": "2023-10-10T09:00Z",
+            "longTotal": 120000,
+            "addTotal": 200,
+            "deleteTotal": 20
+        },
+        {
+            "YMDHm": "2023-10-10T09:30Z",
+            "longTotal": 180000,
+            "addTotal": 150,
+            "deleteTotal": 15
+        },
+        {
+            "YMDHm": "2023-10-10T10:00Z",
+            "longTotal": 1800000,
+            "addTotal": 400,
+            "deleteTotal": 40
+        },
+        {
+            "YMDHm": "2023-10-11T08:30Z",
+            "longTotal": 60000,
+            "addTotal": 100,
+            "deleteTotal": 10
+        },
+        {
+            "YMDHm": "2023-10-11T09:00Z",
+            "longTotal": 120000,
+            "addTotal": 200,
+            "deleteTotal": 20
+        },
+        {
+            "YMDHm": "2023-10-11T09:30Z",
+            "longTotal": 180000,
+            "addTotal": 150,
+            "deleteTotal": 15
+        },
+        {
+            "YMDHm": "2023-10-11T10:00Z",
+            "longTotal": 1800000,
+            "addTotal": 400,
+            "deleteTotal": 40
+        }
+    ],
+    "2023-10": [
+        {
+            "YMDHm": "2023-11-01T14:30Z",
+            "longTotal": 10001,
+            "addTotal": 101,
+            "deleteTotal": 0
+        },
+        {
+            "YMDHm": "2023-11-01T22:30Z",
+            "longTotal": 10001,
+            "addTotal": 101,
+            "deleteTotal": 0
+        },
+        {
+            "YMDHm": "2023-11-01T23:00Z",
+            "longTotal": 10001,
+            "addTotal": 101,
+            "deleteTotal": 0
+        },
+        {
+            "YMDHm": "2023-11-01T23:30Z",
+            "longTotal": 10001,
+            "addTotal": 101,
+            "deleteTotal": 2230
+        },
+        {
+            "YMDHm": "2023-11-02T02:30Z",
+            "longTotal": 10001,
+            "addTotal": 101,
+            "deleteTotal": 11
+        },
+        {
+            "YMDHm": "2023-11-02T03:00Z",
+            "longTotal": 20001,
+            "addTotal": 201,
+            "deleteTotal": 21
+        }
+    ]
+}

@@ -1,23 +1,24 @@
-import { Disposable, Webview, WebviewPanel, window, Uri, ViewColumn } from 'vscode'
+import { Disposable, Webview, WebviewPanel, window, Uri, ViewColumn, ExtensionContext, Extension } from 'vscode'
 import { getUri } from '../lib/getUri'
 import { getNonce } from '../lib/getNonce'
+import { Complete } from '../interface/complete.interface'
 
 export class HelloWorldPanel {
     public static currentPanel: HelloWorldPanel | undefined
     private readonly _panel: WebviewPanel
     private _disposables: Disposable[] = []
 
-    private constructor(panel: WebviewPanel, extensionUri: Uri) {
+    private constructor(panel: WebviewPanel, extensionUri: Uri, extension: ExtensionContext) {
         this._panel = panel
 
         this._panel.onDidDispose(() => this.dispose(), null, this._disposables)
 
         this._panel.webview.html = this._getWebviewContent(this._panel.webview, extensionUri)
 
-        this._setWebviewMessageListener(this._panel.webview)
+        this._setWebviewMessageListener(this._panel.webview, extension)
     }
 
-    public static render(extensionUri: Uri) {
+    public static render(extensionUri: Uri, extension: ExtensionContext) {
         if (HelloWorldPanel.currentPanel) {
             HelloWorldPanel.currentPanel._panel.reveal(ViewColumn.One)
         } else {
@@ -26,10 +27,11 @@ export class HelloWorldPanel {
                 localResourceRoots: [
                     Uri.joinPath(extensionUri, 'out'),
                     Uri.joinPath(extensionUri, 'frontend/build'),
+                    Uri.joinPath(extensionUri, 'node_modules'),
                 ],
             })
 
-            HelloWorldPanel.currentPanel = new HelloWorldPanel(panel, extensionUri)
+            HelloWorldPanel.currentPanel = new HelloWorldPanel(panel, extensionUri, extension)
         }
     }
 
@@ -49,6 +51,9 @@ export class HelloWorldPanel {
     private _getWebviewContent(webview: Webview, extensionUri: Uri) {
         const stylesUri = getUri(webview, extensionUri, ['frontend', 'build', 'assets', 'index.css'])
         const scriptUri = getUri(webview, extensionUri, ['frontend', 'build', 'assets', 'index.js'])
+        const bootstrapIconsUri = webview.asWebviewUri(
+            Uri.joinPath(extensionUri, 'node_modules', 'bootstrap-icons', 'font', 'bootstrap-icons.css')
+        )
 
         const nonce = getNonce()
 
@@ -58,8 +63,9 @@ export class HelloWorldPanel {
         <head>
           <meta charset="UTF-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
+          <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}'; font-src ${webview.cspSource};">
           <link rel="stylesheet" type="text/css" href="${stylesUri}">
+          <link rel="stylesheet" href="${bootstrapIconsUri}">
           <title>Hello World</title>
         </head>
         <body>
@@ -70,7 +76,7 @@ export class HelloWorldPanel {
     `
     }
 
-    private _setWebviewMessageListener(webview: Webview) {
+    private _setWebviewMessageListener(webview: Webview, extension: ExtensionContext) {
         webview.onDidReceiveMessage(
             (message: any) => {
                 const command = message.command
@@ -80,10 +86,20 @@ export class HelloWorldPanel {
                     case 'hello':
                         window.showInformationMessage(text)
                         return
+                    case 'start':
+                        this.sendMessageToVSCode('start', extension)
+                        return
                 }
             },
             undefined,
             this._disposables
         )
+    }
+
+    public sendMessageToVSCode(command: string, extension: ExtensionContext) {
+        this._panel.webview.postMessage({
+            command: command,
+            content: extension.workspaceState.get('complete'),
+        })
     }
 }
