@@ -47,7 +47,7 @@ export default defineComponent({
         })
 
         vscode.postMessage({
-            command: 'start'
+            command: 'start',
         })
     },
     beforeDestroy() {

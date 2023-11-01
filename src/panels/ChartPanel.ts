@@ -1,10 +1,18 @@
-import { Disposable, Webview, WebviewPanel, window, Uri, ViewColumn, ExtensionContext, Extension } from 'vscode'
+import {
+    Disposable,
+    Webview,
+    WebviewPanel,
+    window,
+    Uri,
+    ViewColumn,
+    ExtensionContext,
+    Extension,
+} from 'vscode'
 import { getUri } from '../lib/getUri'
 import { getNonce } from '../lib/getNonce'
-import { Complete } from '../interface/complete.interface'
 
-export class HelloWorldPanel {
-    public static currentPanel: HelloWorldPanel | undefined
+export class ChartPanel {
+    public static currentPanel: ChartPanel | undefined
     private readonly _panel: WebviewPanel
     private _disposables: Disposable[] = []
 
@@ -19,8 +27,8 @@ export class HelloWorldPanel {
     }
 
     public static render(extensionUri: Uri, extension: ExtensionContext) {
-        if (HelloWorldPanel.currentPanel) {
-            HelloWorldPanel.currentPanel._panel.reveal(ViewColumn.One)
+        if (ChartPanel.currentPanel) {
+            ChartPanel.currentPanel._panel.reveal(ViewColumn.One)
         } else {
             const panel = window.createWebviewPanel('showHelloWorld', 'Hello World', ViewColumn.One, {
                 enableScripts: true,
@@ -31,12 +39,12 @@ export class HelloWorldPanel {
                 ],
             })
 
-            HelloWorldPanel.currentPanel = new HelloWorldPanel(panel, extensionUri, extension)
+            ChartPanel.currentPanel = new ChartPanel(panel, extensionUri, extension)
         }
     }
 
     public dispose() {
-        HelloWorldPanel.currentPanel = undefined
+        ChartPanel.currentPanel = undefined
 
         this._panel.dispose()
 

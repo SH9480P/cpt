@@ -28,7 +28,7 @@ export default defineComponent({
     name: 'CodeDurationChart',
     props: {
         durations: Array<number>,
-        labels: Array<string|number>,
+        labels: Array<string | number>,
         type: String,
     },
     data() {
@@ -43,8 +43,10 @@ export default defineComponent({
                             callback(this: Scale, value: number, index: number): string {
                                 if (!isNaN(Number(this.getLabelForValue(value))) && index % 2 == 0) {
                                     return this.getLabelForValue(value)
-                                }
-                                else if ((this.max > 40 && index % 6 == 0) || (this.max <= 40 && index % 2 == 0)) {
+                                } else if (
+                                    (this.max > 40 && index % 6 == 0) ||
+                                    (this.max <= 40 && index % 2 == 0)
+                                ) {
                                     return dayjs(this.getLabelForValue(value)).format('HH:mm')
                                 }
                                 return ''

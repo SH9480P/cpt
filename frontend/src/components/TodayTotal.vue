@@ -44,9 +44,6 @@ dayjs.extend(timezone)
 
 export default defineComponent({
     name: 'TodayTotal',
-    data() {
-        return {}
-    },
     methods: {
         getYearMonth(now: dayjs.Dayjs) {
             return `${now.year()}-${now.month()}`

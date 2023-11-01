@@ -40,10 +40,8 @@ import CodeChangeChart from './CodeChangeChart.vue'
 import CodingDurationChart from './CodingDurationChart.vue'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
-import timezone from 'dayjs/plugin/timezone'
 
 dayjs.extend(utc)
-dayjs.extend(timezone)
 
 export default defineComponent({
     name: 'MonthlyData',
@@ -61,22 +59,30 @@ export default defineComponent({
     },
     computed: {
         getMonthlyChartData() {
-            const thisMonthDayjs = dayjs().year(this.today.year).month(this.today.month).date(1).hour(0).minute(0).second(0).millisecond(0)
+            const thisMonthDayjs = dayjs()
+                .year(this.today.year)
+                .month(this.today.month)
+                .date(1)
+                .hour(0)
+                .minute(0)
+                .second(0)
+                .millisecond(0)
             const nextMonthDayjs = thisMonthDayjs.add(1, 'month')
             const thisMonthYMDHm = this.extractYMDHmFromDayjsObject(thisMonthDayjs.utc())
             const nextMonthYMDHm = this.extractYMDHmFromDayjsObject(nextMonthDayjs.utc())
             const yearMonthUTC = this.extractYearMonthString(thisMonthYMDHm)
             const nextYearMonthUTC = this.extractYearMonthString(nextMonthYMDHm)
             const daysInMonth = thisMonthDayjs.daysInMonth()
-            const labels = Array.from({length: daysInMonth}, (value, index) => index + 1)
-            const increments = Array.from({length: daysInMonth}, () => 0)
-            const decrements = Array.from({length: daysInMonth}, () => 0)
-            const durations = Array.from({length: daysInMonth}, () => 0)
+            const labels = Array.from({ length: daysInMonth }, (value, index) => index + 1)
+            const increments = Array.from({ length: daysInMonth }, () => 0)
+            const decrements = Array.from({ length: daysInMonth }, () => 0)
+            const durations = Array.from({ length: daysInMonth }, () => 0)
 
-            let monthlyComplete = this.complete && this.complete[yearMonthUTC] ? this.complete[yearMonthUTC] : []
+            let monthlyComplete =
+                this.complete && this.complete[yearMonthUTC] ? this.complete[yearMonthUTC] : []
             for (let i = 0; i < 2; i++) {
                 for (let record of monthlyComplete) {
-                    const {YMDHm, addTotal, deleteTotal, longTotal} = record
+                    const { YMDHm, addTotal, deleteTotal, longTotal } = record
                     if (YMDHm >= thisMonthYMDHm && YMDHm < nextMonthYMDHm) {
                         const thisDay = dayjs(YMDHm).date()
                         increments[thisDay - 1] += addTotal
@@ -84,7 +90,8 @@ export default defineComponent({
                         durations[thisDay - 1] += longTotal
                     }
                 }
-                monthlyComplete = this.complete && this.complete[nextYearMonthUTC] ? this.complete[nextYearMonthUTC] : []
+                monthlyComplete =
+                    this.complete && this.complete[nextYearMonthUTC] ? this.complete[nextYearMonthUTC] : []
             }
 
             return {

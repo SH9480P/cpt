@@ -40,13 +40,11 @@ import TodayTotal from './TodayTotal.vue'
 import RecentData from './RecentData.vue'
 import DailyData from './DailyData.vue'
 import MonthlyData from './MonthlyData.vue'
-import complete from './complete.json'
 
 export default defineComponent({
     name: 'Container',
     data() {
         return {
-            complete,
             showHome: true,
         }
     },
@@ -57,8 +55,8 @@ export default defineComponent({
         MonthlyData,
     },
     props: {
-        // complete: Object
-    }
+        complete: Object,
+    },
 })
 </script>
 

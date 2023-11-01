@@ -39,10 +39,8 @@ import CodeChangeChart from './CodeChangeChart.vue'
 import CodingDurationChart from './CodingDurationChart.vue'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
-import timezone from 'dayjs/plugin/timezone'
 
 dayjs.extend(utc)
-dayjs.extend(timezone)
 
 export default defineComponent({
     name: 'DailyData',
@@ -53,7 +51,6 @@ export default defineComponent({
     data() {
         return {
             today: new Date(),
-            // today: null
         }
     },
     computed: {
@@ -93,7 +90,6 @@ export default defineComponent({
                 increments.push(addNum)
                 decrements.push(deleteNum)
                 durations.push(duration)
-                // console.log(labels)
             }
             return {
                 increments,

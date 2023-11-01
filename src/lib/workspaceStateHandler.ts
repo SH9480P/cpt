@@ -5,7 +5,7 @@ import * as minMax from 'dayjs/plugin/minMax'
 import { CodeChange } from '../interface/codeChange.interface'
 import { Complete } from '../interface/complete.interface'
 import { CodingDuration } from '../interface/codingDuration.interface'
-import { HelloWorldPanel } from '../panels/HelloWorldPanel'
+import { ChartPanel } from '../panels/ChartPanel'
 
 dayjs.extend(utc)
 dayjs.extend(minMax)
@@ -160,8 +160,8 @@ function updateCompleteCodingDuration(context: ExtensionContext, longTotal: numb
     }
     completeState[yearMonth].push({ YMDHm, addTotal: 0, deleteTotal: 0, longTotal: longTotal })
     context.workspaceState.update(COMPLETE_KEY, completeState).then(() => {
-        if (HelloWorldPanel.currentPanel) {
-            HelloWorldPanel.currentPanel.sendMessageToVSCode('getWorkspaceState', context)
+        if (ChartPanel.currentPanel) {
+            ChartPanel.currentPanel.sendMessageToVSCode('getWorkspaceState', context)
         }
     })
 }

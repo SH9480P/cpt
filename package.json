@@ -1,6 +1,6 @@
 {
-  "name": "cpt",
-  "displayName": "coder's passion tracker",
+  "name": "passiometer",
+  "displayName": "coder's passiometer",
   "description": "",
   "version": "0.0.1",
   "engines": {
@@ -9,21 +9,27 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "cpt.veTest",
-        "title": "ve test"
+        "command": "passiometer.start-tracking",
+        "title": "Coder's Passiometer: Start"
       },
       {
-        "command": "cpt.resetState",
-        "title": "reset state"
+        "command": "passiometer.stop-tracking",
+        "title": "Coder's Passiometer: Stop"
       },
       {
-        "command": "cpt.showHelloWorld",
-        "title": "Hello World (Vue): Show"
+        "command": "passiometer.reset-state",
+        "title": "Coder's Passiometer: Reset Data"
+      },
+      {
+        "command": "passiometer.open-webview",
+        "title": "Coder's Passiometer: Show"
       }
     ]
   },
