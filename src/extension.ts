@@ -9,7 +9,7 @@ import {
     workspace,
 } from 'vscode'
 import { updateCodeChange, updateCodingDuration, saveTracking } from './lib/workspaceStateHandler'
-import { HelloWorldPanel } from './panels/ChartPanel'
+import { ChartPanel } from './panels/ChartPanel'
 
 let codeChangeEventListener: Disposable | undefined = undefined
 let codingDurationEventListener: Disposable | undefined = undefined
@@ -72,7 +72,7 @@ function removeAllData(context: ExtensionContext) {
 }
 
 function renderWebViewPanel(context: ExtensionContext) {
-    HelloWorldPanel.render(context.extensionUri, context)
+    ChartPanel.render(context.extensionUri, context)
     console.log('panel open!')
 }
 
