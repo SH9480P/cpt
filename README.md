@@ -1,6 +1,6 @@
 # passiometer README
 
-This is the README for your extension "passiometer". After writing up a brief description, we recommend including the following sections.
+This is "passiometer".
 
 ## Features
 
